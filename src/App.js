@@ -11,7 +11,11 @@ import {
   createUserProfileDocument,
 } from './component/firebase/firebase.utils';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import { setCurrentUser } from './component/redux/user/user.actions';
+import { selectCurrentUser } from './component/redux/user/user.selector';
+import CheckoutPage from './pages/checkout/checkout.component';
+
 class App extends React.Component {
   // for the authentication of google signin
   unsubscribeFromAuth = null;
@@ -46,6 +50,7 @@ class App extends React.Component {
         <Switch>
           ̥<Route exact path='/' component={Homepage} />
           ̥<Route path='/shop' component={ShopPage} />
+          ̥<Route exact path='/checkout' component={CheckoutPage} />
           ̥
           <Route
             exact
@@ -60,8 +65,8 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = ({ user }) => ({
-  currentUser: user.currentUser,
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
 });
 const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (user) => dispatch(setCurrentUser(user)),
