@@ -2,25 +2,21 @@ import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import ShopPage from './pages/shop/shop.component';
 import './App.css';
-import Header from './component/header/header.component';
+import Header from './components/header/header.component';
 
 import Homepage from './pages/homepage/homepage.component';
-import SignInAndSignUp from './component/sign-in & sign-up/sign-in-and-sign-up.component';
-import {
-  auth,
-  createUserProfileDocument,
-} from './component/firebase/firebase.utils';
+import SignInAndSignUp from './components/sign-in-and-sign-up/sign-in-and-sign-up.component';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { setCurrentUser } from './component/redux/user/user.actions';
-import { selectCurrentUser } from './component/redux/user/user.selector';
+import { setCurrentUser } from './components/redux/user/user.actions';
+import { selectCurrentUser } from './components/redux/user/user.selectors';
 import CheckoutPage from './pages/checkout/checkout.component';
 
 class App extends React.Component {
-  // for the authentication of google signin
   unsubscribeFromAuth = null;
-  // UNSAFE_componentWillMount is the new name for componentillMount
-  UNSAFE_componentWillMount() {
+
+  componentDidMount() {
     const { setCurrentUser } = this.props;
 
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
@@ -34,27 +30,26 @@ class App extends React.Component {
           });
         });
       }
+
       setCurrentUser(userAuth);
     });
   }
+
   componentWillUnmount() {
     this.unsubscribeFromAuth();
   }
 
-  //we will pass the userState in header so that the header may know someone is logged In
   render() {
     return (
       <div>
         <Header />
-
         <Switch>
-          ̥<Route exact path='/' component={Homepage} />
-          ̥<Route path='/shop' component={ShopPage} />
-          ̥<Route exact path='/checkout' component={CheckoutPage} />
-          ̥
+          <Route exact path='/' component={Homepage} />
+          <Route path='/shop' component={ShopPage} />
+          <Route exact path='/checkout' component={CheckoutPage} />
           <Route
             exact
-            path='/Signin'
+            path='/signin'
             render={() =>
               this.props.currentUser ? <Redirect to='/' /> : <SignInAndSignUp />
             }
@@ -68,7 +63,9 @@ class App extends React.Component {
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser,
 });
+
 const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (user) => dispatch(setCurrentUser(user)),
 });
+
 export default connect(mapStateToProps, mapDispatchToProps)(App);
